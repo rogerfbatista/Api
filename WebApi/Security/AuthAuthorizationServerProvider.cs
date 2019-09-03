@@ -49,17 +49,24 @@ namespace WebApi.Security
             {
                 //Todo Obter usuario do banco de dados
                 var result = _clienteBusiness.Autenticar(context.UserName, context.Password);
+                if (result != null)
+                {
+                    identity.AddClaim(new Claim(ClaimTypes.Role, "Rogerio"));
+                    roles.Add("Rogerio");
 
-                identity.AddClaim(new Claim(ClaimTypes.Role, "Rogerio"));
-                roles.Add("Rogerio");
-               
-                identity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
-                identity.AddClaim(new Claim("url", "http://localhost:44484"));
+                    identity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+                    identity.AddClaim(new Claim("url", result.Ambiente));
 
-                var principal = new GenericPrincipal(identity, roles.ToArray());
-                Thread.CurrentPrincipal = principal;
 
-                await Task.FromResult(context.Validated(identity));
+                    var principal = new GenericPrincipal(identity, roles.ToArray());
+                    Thread.CurrentPrincipal = principal;
+
+                    await Task.FromResult(context.Validated(identity));
+                }
+                else
+                {
+                    context.SetError("invalid_grant","Usuario ou Senha Invalidos");
+                }
             }
             catch (Exception ex)
             {
