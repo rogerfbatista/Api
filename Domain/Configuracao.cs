@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-   public  class Cliente
+   public  class Configuracao
     {
-        public Cliente()
+        public Configuracao()
         {
 
         }
@@ -16,9 +16,5 @@ namespace Domain
         public int Id { get; set; }
         public string Nome { get; set; }
 
-        public string Senha { get; set; }
-        public string Ambiente { get; set; }
-
-        public List<Configuracao> ListaConfiguracaos { get; set; }
     }
 }

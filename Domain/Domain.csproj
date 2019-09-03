@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClienteConfiguracao.cs" />
+    <Compile Include="Configuracao.cs" />
     <Compile Include="Cliente.cs" />
     <Compile Include="IBaseBusiness.cs" />
     <Compile Include="IBaseRepository.cs" />

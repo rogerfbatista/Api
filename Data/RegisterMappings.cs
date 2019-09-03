@@ -16,6 +16,8 @@ namespace Data
             FluentMapper.Initialize(config =>
             {
                 config.AddMap(new ClienteMap());
+                config.AddMap(new ConfiguracaoMap());
+                config.AddMap(new ClienteConfiguracaoMap());
                 config.ForDommel();
             });
         }

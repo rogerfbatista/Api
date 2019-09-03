@@ -21,4 +21,31 @@ namespace Data
             
         }
     }
+
+   public class ConfiguracaoMap : DommelEntityMap<Configuracao>
+   {
+
+       public ConfiguracaoMap()
+       {
+           ToTable("Configuracao");
+           Map(x => x.Id).ToColumn("Id").IsKey();
+           Map(x => x.Nome).ToColumn("Nome");
+          
+
+       }
+   }
+
+   public class ClienteConfiguracaoMap : DommelEntityMap<ClienteConfiguracao>
+   {
+
+       public ClienteConfiguracaoMap()
+       {
+           ToTable("ClienteConfiguracao");
+           Map(x => x.Id).ToColumn("Id").IsKey();
+           Map(x => x.IdCliente).ToColumn("idCliente");
+           Map(x => x.IdConfiguracao).ToColumn("idConfiguracao");
+           Map(x => x.Ativo).ToColumn("ativo");
+
+       }
+   }
 }
