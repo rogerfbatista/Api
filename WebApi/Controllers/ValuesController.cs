@@ -1,23 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Web.Http;
 using Domain;
+using WebApi.Atributtes;
 using WebApi.Security;
+using static WebApi.Atributtes.ExceptionAttribute;
 
 namespace WebApi.Controllers
 {
     [MyCorsPolicy]
     [AuthorizeRoles]
-    public class ValuesController : ApiController
+    [Exception]
+      public class ValuesController : ApiController
     {
         private readonly Domain.IClienteBusiness _clienteBusiness;
         public ValuesController(IClienteBusiness clienteBusiness)
         {
             _clienteBusiness = clienteBusiness;
         }
+
+        protected ValuesController()
+        {
+
+        }
+
+
         // GET api/values
         public IEnumerable<object> Get()
         {
@@ -32,8 +39,15 @@ namespace WebApi.Controllers
         }
 
         // POST api/values
-        public void Post([FromBody]string value)
+        [ValidateModel]
+        public HttpRequestMessage Post([FromBody]PostRequest req)
         {
+            var http = new HttpRequestMessage()
+            {
+                Content = new StringContent(req.value, System.Text.Encoding.UTF8),
+
+            };
+            return http;
         }
 
         // PUT api/values/5

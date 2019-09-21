@@ -29,7 +29,7 @@ namespace Data
        {
            ToTable("Configuracao");
            Map(x => x.Id).ToColumn("Id").IsKey();
-           Map(x => x.Nome).ToColumn("Nome");
+           Map(x => x.NomeConfiguracao).ToColumn("Nome");
           
 
        }

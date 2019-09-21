@@ -24,22 +24,34 @@ namespace Data
         {
             using (var db = new SqlConnection(ConnectionString))
             {
-                        var sql = @"SELECT DISTINCT
-                        c.Id
-                        ,c.[Nome]
-                        , con.Nome as NomeConfiguracao
-                        ,[Senha]
-                        ,[Ambiente]
+                var sql = @"SELECT DISTINCT
+                        c.Ambiente
+                       , c.Id
+                        ,c.Nome                      
+                        ,c.Senha                      
+                        ,con.Nome as NomeConfiguracao
                         FROM [ModernStore].[dbo].[Cliente] c
                         inner join [dbo].[ClienteConfiguracao] cc
                         on c.Id = cc.idCliente
                         INNER JOIN [dbo].[Configuracao] con
                         on  con.Id = cc.idConfiguracao ";
-                        return db.Query<Cliente>(sql)
-                            .FirstOrDefault<Cliente>(cliente => cliente.Nome == nome && cliente.Senha == senha);
+                return db.Query<Cliente, Configuracao, Cliente>(sql,
+                        (cli, con) =>
+                        {
+                            cli.ListaConfiguracaos.Add(new Configuracao()
+                            {
+                                Id = con.Id,
+                                NomeConfiguracao =con.NomeConfiguracao
+
+                            });
+
+                            return cli;
+
+                        }, splitOn: "Ambiente,Id,Nome,Senha,NomeConfiguracao")
+                    .FirstOrDefault<Cliente>(cliente => cliente.Nome == nome && cliente.Senha == senha);
 
 
-                        //  return db.FirstOrDefault<Cliente>(cliente => cliente.Nome == nome && cliente.Senha == senha);
+                //  return db.FirstOrDefault<Cliente>(cliente => cliente.Nome == nome && cliente.Senha == senha);
 
 
             }

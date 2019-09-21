@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web.Http;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
@@ -15,8 +16,23 @@ namespace WebApi
         {
             Injector.ConfiguracaoSimpleInjector.StartSimpleInjetor();
             ConfigureOAuth(app);
-            
+
         }
+
+        //public void Configuration(IAppBuilder app)
+        //{
+        //    Injector.ConfiguracaoSimpleInjector.StartSimpleInjetorTeste();
+        //    ConfigureOAuth(app);
+
+        //    HttpConfiguration config = new HttpConfiguration();
+        //    config.Routes.MapHttpRoute(
+        //        name: "DefaultApi",
+        //        routeTemplate: "api/{controller}/{id}",
+        //        defaults: new { id = RouteParameter.Optional }
+        //    );
+
+        //    app.UseWebApi(config);
+        //}
 
         public void ConfigureOAuth(IAppBuilder app)
         {
@@ -24,7 +40,7 @@ namespace WebApi
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/api/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(3),
                 Provider = new AuthAuthorizationServerProvider(Injector.ConfiguracaoSimpleInjector.IClienteBusiness)
             };
 

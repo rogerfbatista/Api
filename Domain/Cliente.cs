@@ -10,7 +10,7 @@ namespace Domain
     {
         public Cliente()
         {
-
+            ListaConfiguracaos = new List<Configuracao>();
         }
 
         public int Id { get; set; }
