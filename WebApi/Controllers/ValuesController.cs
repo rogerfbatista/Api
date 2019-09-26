@@ -11,7 +11,8 @@ namespace WebApi.Controllers
     [MyCorsPolicy]
     [AuthorizeRoles]
     [Exception]
-      public class ValuesController : ApiController
+    [RoutePrefix("api/Conta")]
+    public class ValuesController : ApiController
     {
         private readonly Domain.IClienteBusiness _clienteBusiness;
         public ValuesController(IClienteBusiness clienteBusiness)
@@ -19,10 +20,9 @@ namespace WebApi.Controllers
             _clienteBusiness = clienteBusiness;
         }
 
-        protected ValuesController()
-        {
 
-        }
+
+
 
 
         // GET api/values
@@ -40,6 +40,7 @@ namespace WebApi.Controllers
 
         // POST api/values
         [ValidateModel]
+        [Route("api/ContaTeste")]
         public HttpRequestMessage Post([FromBody]PostRequest req)
         {
             var http = new HttpRequestMessage()

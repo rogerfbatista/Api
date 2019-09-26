@@ -30,7 +30,7 @@ namespace Injector
             //container.Register<IUserRepository, SqlUserRepository>(Lifestyle.Scoped);
 
             // This is an extension method from the integration package.
-            container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
+          //  container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
 
             container.Verify();
 

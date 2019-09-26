@@ -20,7 +20,18 @@ namespace Business
             return _repository.Autenticar(nome, senha);
         }
 
-        public List<Cliente> ObterTodos()
+
+        public virtual List<Cliente> Obter()
+        {
+            return new List<Cliente>()
+            {
+                new Cliente()
+                {
+                    Nome ="Rogerio"
+                }
+            };
+        }
+        public  List<Cliente> ObterTodos()
         {
             return _repository.ObterTodos();
         }

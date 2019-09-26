@@ -13,13 +13,18 @@ namespace Data
 
         public static void Register()
         {
-            FluentMapper.Initialize(config =>
+
+            if (FluentMapper.EntityMaps.Count == 0)
             {
-                config.AddMap(new ClienteMap());
-                config.AddMap(new ConfiguracaoMap());
-                config.AddMap(new ClienteConfiguracaoMap());
-                config.ForDommel();
-            });
+                FluentMapper.Initialize(config =>
+                {
+                    config.AddMap(new ClienteMap());
+                    config.AddMap(new ConfiguracaoMap());
+                    config.AddMap(new ClienteConfiguracaoMap());
+                    config.ForDommel();
+                });
+
+            }
         }
     }
 }

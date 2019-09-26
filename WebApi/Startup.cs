@@ -17,6 +17,15 @@ namespace WebApi
             Injector.ConfiguracaoSimpleInjector.StartSimpleInjetor();
             ConfigureOAuth(app);
 
+            HttpConfiguration config = new HttpConfiguration();
+            config.Routes.MapHttpRoute(
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+
+            app.UseWebApi(config);
+
         }
 
         //public void Configuration(IAppBuilder app)
