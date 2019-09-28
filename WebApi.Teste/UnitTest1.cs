@@ -6,13 +6,7 @@ using Microsoft.Owin.Testing;
 using System.Net.Http;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Microsoft.Owin.Hosting;
-using System.Net.Http.Headers;
-using WebApi.Controllers;
-using Domain;
-using System.Web.Http;
-using Business;
-using Data;
+using System.Net;
 
 namespace WebApi.Teste
 {
@@ -22,91 +16,91 @@ namespace WebApi.Teste
 
         private HttpClient _client;
 
-        private string Url = "http://localhost:5000/";
+        private string TOKEN;
+
+        private TestServer SERVER;
 
         [TestInitialize]
-        public async Task Init()
+        public async Task ObterTokenValido()
         {
-            //_webApp = WebApp.Start<Startup>(url: Url);
-            //_client = new HttpClient
-            //{
-            //    BaseAddress = new Uri(Url)
-            //};
+
+            Startup owinStartup = new Startup();
+            Action<IAppBuilder> owinStartupAction = new Action<IAppBuilder>(owinStartup.ConfigurationTeste);
+
+            SERVER = TestServer.Create(owinStartupAction);
+
+
+            var req = SERVER.CreateRequest("api/token");
+            req.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            req.And(x => x.Content = new StringContent("grant_type=password&username=rogerio&password=123", System.Text.Encoding.ASCII));
+            var response = await req.GetAsync();
+
+            // Did the request produce a 200 OK response?
+            Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
+
+            // Retrieve the content of the response
+            string responseBody = await response.Content.ReadAsStringAsync();
+            // this uses a custom method for deserializing JSON to a dictionary of objects using JSON.NET
+            Dictionary<string, object> responseData = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseBody);
+
+            TOKEN = responseData["access_token"].ToString();
+
+            // Did the response come with an access token?
+            Assert.IsTrue(responseData.ContainsKey("access_token"));
         }
+
+
+
 
 
         [TestMethod]
-        public async Task TesteToken()
+        public async Task ObterListaValida()
         {
-            var token = string.Empty;
-
-            Startup owinStartup = new Startup();
-            Action<IAppBuilder> owinStartupAction = new Action<IAppBuilder>(owinStartup.Configuration);
-
-            using (var server = TestServer.Create<Startup>())
-            {
-                var req = server.CreateRequest("api/token");
-                req.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-                req.And(x => x.Content = new StringContent("grant_type=password&username=rogerio&password=123", System.Text.Encoding.ASCII));
-                var response = await req.GetAsync();
-
-                // Did the request produce a 200 OK response?
-                Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
-
-                // Retrieve the content of the response
-                string responseBody = await response.Content.ReadAsStringAsync();
-                // this uses a custom method for deserializing JSON to a dictionary of objects using JSON.NET
-                Dictionary<string, object> responseData = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseBody);
-
-                token = responseData["access_token"].ToString();
-
-                // Did the response come with an access token?
-                Assert.IsTrue(responseData.ContainsKey("access_token"));
-
-                server.Handler.Dispose();
-                server.Dispose();
 
 
-            }
-
-            using (WebApp.Start<Startup>(url: Url))
-            {
-                _client = new HttpClient
-                {
-                    BaseAddress = new Uri(Url),
-
-                };
-
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var cli = new ClienteRepository();
-                var mock = new Moq.Mock<ClienteBusiness>(Moq.MockBehavior.Strict, new object[] { cli });
+            _client = SERVER.HttpClient;
+            _client.DefaultRequestHeaders.Add($"Authorization", "Bearer " + TOKEN);
 
 
-                mock.Setup(x => x.Obter());
-                var valueController = new ValuesController(mock.Object);
+            var responseValue = await SERVER.CreateRequest("api/values")
+                .AddHeader("Authorization", "Bearer " + TOKEN)
+                .And(x => x.Content = new StringContent("", System.Text.Encoding.ASCII))
+                .GetAsync();
 
-                valueController.Request = new HttpRequestMessage();
+            var result = await responseValue.Content.ReadAsStringAsync();
 
-                valueController.Request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            Assert.IsTrue(result.Contains("Nome"));
 
-                valueController.Configuration = new HttpConfiguration();
-                valueController.Configuration.Routes.MapHttpRoute(
-                    name: "DefaultApi",
-                    routeTemplate: "api/{controller}/{id}",
-                    defaults: new { id = RouteParameter.Optional });
-
-
-                var teste = valueController.Get();
-
-                var responseValue = await _client.GetAsync(Url + "api/Values");
-                var result = await responseValue.Content.ReadAsStringAsync();
-
-               Assert.IsTrue(result.Contains("Nome"));
-
-            }
         }
 
+        [TestMethod]
+        public async Task ObterPostValido()
+        {
+            
+            var objParametro = new
+            {
+                value = "teste"
+            };
+
+            var json = JsonConvert.SerializeObject(objParametro);
+
+
+            var resp = SERVER.CreateRequest("api/values")
+                             .AddHeader("Authorization", "Bearer " + TOKEN)
+                               .And(x => x.Content = new StringContent(json, System.Text.Encoding.Unicode, "application/json"));
+
+
+            var responseValue = await resp.PostAsync();
+
+            var result = await responseValue.Content.ReadAsStringAsync();
+            Assert.AreEqual(responseValue.StatusCode, HttpStatusCode.OK);
+
+
+        }
     }
+
 }
+
+
+
 

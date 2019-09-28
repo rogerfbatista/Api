@@ -4,6 +4,7 @@ using System.Web.Http;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
+using SimpleInjector.Integration.WebApi;
 using WebApi.Security;
 
 [assembly: OwinStartup(typeof(WebApi.Startup))]
@@ -18,30 +19,28 @@ namespace WebApi
             ConfigureOAuth(app);
 
             HttpConfiguration config = new HttpConfiguration();
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
+           
 
             app.UseWebApi(config);
 
         }
 
-        //public void Configuration(IAppBuilder app)
-        //{
-        //    Injector.ConfiguracaoSimpleInjector.StartSimpleInjetorTeste();
-        //    ConfigureOAuth(app);
+        public void ConfigurationTeste(IAppBuilder app)
+        {
+            
+           var con = Injector.ConfiguracaoSimpleInjector.StartSimpleInjetorTeste();
 
-        //    HttpConfiguration config = new HttpConfiguration();
-        //    config.Routes.MapHttpRoute(
-        //        name: "DefaultApi",
-        //        routeTemplate: "api/{controller}/{id}",
-        //        defaults: new { id = RouteParameter.Optional }
-        //    );
+            ConfigureOAuth(app);
 
-        //    app.UseWebApi(config);
-        //}
+            HttpConfiguration config = new HttpConfiguration()
+            {
+                DependencyResolver = new SimpleInjectorWebApiDependencyResolver(con),
+               
+            };
+            WebApiConfig.Register(config);
+           
+            app.UseWebApi(config);
+        }
 
         public void ConfigureOAuth(IAppBuilder app)
         {

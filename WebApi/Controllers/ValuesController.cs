@@ -8,10 +8,7 @@ using static WebApi.Atributtes.ExceptionAttribute;
 
 namespace WebApi.Controllers
 {
-    [MyCorsPolicy]
-    [AuthorizeRoles]
-    [Exception]
-    [RoutePrefix("api/Conta")]
+
     public class ValuesController : ApiController
     {
         private readonly Domain.IClienteBusiness _clienteBusiness;
@@ -21,11 +18,7 @@ namespace WebApi.Controllers
         }
 
 
-
-
-
-
-        // GET api/values
+              // GET api/values
         public IEnumerable<object> Get()
         {
             var list = _clienteBusiness.ObterTodos();
@@ -40,7 +33,7 @@ namespace WebApi.Controllers
 
         // POST api/values
         [ValidateModel]
-        [Route("api/ContaTeste")]
+       
         public HttpRequestMessage Post([FromBody]PostRequest req)
         {
             var http = new HttpRequestMessage()

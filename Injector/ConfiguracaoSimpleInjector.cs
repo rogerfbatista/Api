@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Dispatcher;
 using Business;
 using Data;
 using Domain;
@@ -30,7 +32,7 @@ namespace Injector
             //container.Register<IUserRepository, SqlUserRepository>(Lifestyle.Scoped);
 
             // This is an extension method from the integration package.
-          //  container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
+          container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
 
             container.Verify();
 
@@ -47,12 +49,16 @@ namespace Injector
         }
 
 
-        public static void StartSimpleInjetorTeste()
+        public static Container StartSimpleInjetorTeste()
         {
 
-          
-            var container = new Container();
-            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+           // GlobalConfiguration.Configuration.Services.Replace(typeof(IAssembliesResolver), new TestAssembliesResolver());
+
+           var container = new Container();
+
+
+            //var container = new Container();
+            //container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
             container.Register<IClienteBusiness, ClienteBusiness>();
             container.Register<IClienteRepository, ClienteRepository>(Lifestyle.Singleton);
@@ -61,22 +67,33 @@ namespace Injector
             //container.Register<IUserRepository, SqlUserRepository>(Lifestyle.Scoped);
 
             // This is an extension method from the integration package.
-            //container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
+            var ass = Assembly.GetExecutingAssembly();
+
+           container.RegisterWebApiControllers(GlobalConfiguration.Configuration,ass);
+       
 
             container.Verify();
 
             IClienteBusiness = container.GetInstance<IClienteBusiness>();
 
 
-            GlobalConfiguration.Configuration.DependencyResolver =
-                new SimpleInjectorWebApiDependencyResolver(container);
+          //  GlobalConfiguration.Configuration.DependencyResolver =   new SimpleInjectorWebApiDependencyResolver(container);
 
             //iniciar Map
             Data.RegisterMappings.Register();
 
+            return container;
 
         }
 
 
+    }
+
+    public class TestAssembliesResolver : IAssembliesResolver
+    {
+        public ICollection<Assembly> GetAssemblies()
+        {
+            return AppDomain.CurrentDomain.GetAssemblies();
+        }
     }
 }

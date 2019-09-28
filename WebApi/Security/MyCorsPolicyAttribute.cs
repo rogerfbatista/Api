@@ -43,11 +43,6 @@ namespace WebApi.Security
                 _policy.Origins.Add(claimUrl);
 
             }
-
-
-
-
-
         }
 
 
