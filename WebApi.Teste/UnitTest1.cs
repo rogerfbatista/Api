@@ -76,7 +76,7 @@ namespace WebApi.Teste
         [TestMethod]
         public async Task ObterPostValido()
         {
-            
+
             var objParametro = new
             {
                 value = "teste"
@@ -95,6 +95,34 @@ namespace WebApi.Teste
             var result = await responseValue.Content.ReadAsStringAsync();
             Assert.AreEqual(responseValue.StatusCode, HttpStatusCode.OK);
 
+            Assert.IsTrue(result.Contains("teste"));
+
+        }
+
+
+        [TestMethod]
+        public async Task ObterPostInvalido()
+        {
+
+            var objParametro = new
+            {
+                value = ""
+            };
+
+            var json = JsonConvert.SerializeObject(objParametro);
+
+
+            var resp = SERVER.CreateRequest("api/values")
+                             .AddHeader("Authorization", "Bearer " + TOKEN)
+                               .And(x => x.Content = new StringContent(json, System.Text.Encoding.Unicode, "application/json"));
+
+
+            var responseValue = await resp.PostAsync();
+
+            var result = await responseValue.Content.ReadAsStringAsync();
+            Assert.AreEqual(responseValue.StatusCode, HttpStatusCode.BadRequest);
+
+            Assert.IsTrue(result.Contains("Obrigatorio"));
 
         }
     }

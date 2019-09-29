@@ -48,7 +48,7 @@ namespace WebApi
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/api/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(3),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
                 Provider = new AuthAuthorizationServerProvider(Injector.ConfiguracaoSimpleInjector.IClienteBusiness)
             };
 

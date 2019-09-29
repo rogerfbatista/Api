@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Web.Http;
 using Domain;
+using Newtonsoft.Json;
 using WebApi.Atributtes;
 using WebApi.Security;
 using static WebApi.Atributtes.ExceptionAttribute;
@@ -18,7 +19,7 @@ namespace WebApi.Controllers
         }
 
 
-              // GET api/values
+        // GET api/values
         public IEnumerable<object> Get()
         {
             var list = _clienteBusiness.ObterTodos();
@@ -33,15 +34,18 @@ namespace WebApi.Controllers
 
         // POST api/values
         [ValidateModel]
-       
-        public HttpRequestMessage Post([FromBody]PostRequest req)
+
+        public HttpResponseMessage Post([FromBody]PostRequest req)
         {
-            var http = new HttpRequestMessage()
+
+            return new HttpResponseMessage()
             {
-                Content = new StringContent(req.value, System.Text.Encoding.UTF8),
+                //   Content = new StringContent(req.value, System.Text.Encoding.Unicode, "application/json"),
+                Content = new StringContent(JsonConvert.SerializeObject(req), System.Text.Encoding.Unicode),
+
 
             };
-            return http;
+
         }
 
         // PUT api/values/5
