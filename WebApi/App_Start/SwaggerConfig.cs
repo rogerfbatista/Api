@@ -2,6 +2,11 @@ using System.Web.Http;
 using WebActivatorEx;
 using WebApi;
 using Swashbuckle.Application;
+using Swashbuckle.Swagger;
+using System.Collections.Generic;
+using System.Web.Http.Description;
+using Newtonsoft.Json;
+using System;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -61,12 +66,12 @@ namespace WebApi
                         //c.BasicAuth("basic")
                         //    .Description("Basic HTTP Authentication");
                         //
-						// NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
-                        //c.ApiKey("apiKey")
-                        //    .Description("API Key Authentication")
-                        //    .Name("apiKey")
-                        //    .In("header");
-                        //
+                        // NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
+                        c.ApiKey("Authorization")
+                            .Description("Bearer Authentication")
+                            .Name("Bearer")
+                            .In("header");
+
                         //c.OAuth2("oauth2")
                         //    .Description("OAuth2 Implicit Grant")
                         //    .Flow("implicit")
@@ -94,7 +99,7 @@ namespace WebApi
                         // ProductsController will be listed before those from a CustomersController. This is typically
                         // used to customize the order of groupings in the swagger-ui.
                         //
-                        //c.OrderActionGroupsBy(new DescendingAlphabeticComparer());
+                       // c.OrderActionGroupsBy(new DescendingAlphabeticComparer());
 
                         // If you annotate Controllers and API Types with
                         // Xml comments (http://msdn.microsoft.com/en-us/library/b2s063f7(v=vs.110).aspx), you can incorporate
@@ -163,7 +168,7 @@ namespace WebApi
                         // the Swagger 2.0 spec. - https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md
                         // before using this option.
                         //
-                        //c.DocumentFilter<ApplyDocumentVendorExtensions>();
+                        c.DocumentFilter<AuthTokenOperation>();
 
                         // In contrast to WebApi, Swagger 2.0 does not include the query string component when mapping a URL
                         // to an action. As a result, Swashbuckle will raise an exception if it encounters multiple actions
@@ -248,8 +253,80 @@ namespace WebApi
                         // If your API supports ApiKey, you can override the default values.
                         // "apiKeyIn" can either be "query" or "header"
                         //
-                        //c.EnableApiKeySupport("apiKey", "header");
+                        c.EnableApiKeySupport("Authorization", "header");
                     });
         }
     }
+
+
+    public class AuthTokenOperation : IDocumentFilter
+    {
+        public void Apply(SwaggerDocument swaggerDoc, SchemaRegistry schemaRegistry, IApiExplorer apiExplorer)
+        {
+            swaggerDoc.paths.Add("/api/token", new PathItem
+            {
+                post = new Operation
+                {
+                    tags = new List<string> { "Token" },
+                    consumes = new List<string>
+                {
+                    "application/x-www-form-urlencoded"
+                },
+                    parameters = new List<Parameter> {
+                    new Parameter
+                    {
+                        type = "string",
+                        name = "grant_type",
+                        required = true,
+                        @in = "formData"
+                    },
+                    new Parameter
+                    {
+                        type = "string",
+                        name = "username",
+                        required = false,
+                        @in = "formData"
+                    },
+                    new Parameter
+                    {
+                        type = "string",
+                        name = "password",
+                        required = false,
+                        @in = "formData"
+                    }
+                },
+                    responses = new Dictionary<string, Response>()
+                {
+                    {
+                        "200",
+                        new Response {schema = schemaRegistry.GetOrRegister(typeof(OAuthTokenResponse))}
+                    }
+                }
+                }
+            });
+        }
+    }
+
+    public class OAuthTokenResponse
+    {
+        [JsonProperty("access_token")]
+        public string AccessToken { get; set; }
+
+        [JsonProperty("token_type")]
+        public string TokenType { get; set; }
+
+        [JsonProperty("expires_in")]
+        public long ExpiresIn { get; set; }
+
+        [JsonProperty("userName")]
+        public string Username { get; set; }
+
+        [JsonProperty(".issued")]
+        public DateTime Issued { get; set; }
+
+        [JsonProperty(".expires")]
+        public DateTime Expires { get; set; }
+    }
+
+
 }

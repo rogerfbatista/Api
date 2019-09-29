@@ -3,14 +3,11 @@ using System.Net.Http;
 using System.Web.Http;
 using Domain;
 using Newtonsoft.Json;
-using WebApi.Atributtes;
-using WebApi.Security;
-using static WebApi.Atributtes.ExceptionAttribute;
 
 namespace WebApi.Controllers
 {
 
-    public class ValuesController : ApiController
+    public class ValuesController : BaseController
     {
         private readonly Domain.IClienteBusiness _clienteBusiness;
         public ValuesController(IClienteBusiness clienteBusiness)
@@ -32,8 +29,7 @@ namespace WebApi.Controllers
             return "value";
         }
 
-        // POST api/values
-        [ValidateModel]
+      
 
         public HttpResponseMessage Post([FromBody]PostRequest req)
         {
