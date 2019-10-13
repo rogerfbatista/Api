@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
+using WebApi.OutputCache.V2;
 
 namespace WebApi.Controllers
 {
 
 
-    [SwaggerTag("Cli")]
+
+    [CacheOutput(ServerTimeSpan = 10)]
     public class ClienteController : BaseController
     {
         // GET: api/Cliente
