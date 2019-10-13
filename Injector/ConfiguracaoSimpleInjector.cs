@@ -20,11 +20,11 @@ namespace Injector
     {
         public static IClienteBusiness IClienteBusiness;
 
-        public static void StartSimpleInjetor()
+        public static void StartSimpleInjetor(HttpConfiguration config)
         {
             var container = new Container();
             container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-              
+
             container.Register<IClienteBusiness, ClienteBusiness>();
             container.Register<IClienteRepository, ClienteRepository>(Lifestyle.Singleton);
 
@@ -32,29 +32,28 @@ namespace Injector
             //container.Register<IUserRepository, SqlUserRepository>(Lifestyle.Scoped);
 
             // This is an extension method from the integration package.
-          container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
+            container.RegisterWebApiControllers(config);
 
             container.Verify();
 
             IClienteBusiness = container.GetInstance<IClienteBusiness>();
 
 
-            GlobalConfiguration.Configuration.DependencyResolver =
-                new SimpleInjectorWebApiDependencyResolver(container);
+            config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
 
             //iniciar Map
             Data.RegisterMappings.Register();
 
-           
+
         }
 
 
         public static Container StartSimpleInjetorTeste()
         {
 
-           // GlobalConfiguration.Configuration.Services.Replace(typeof(IAssembliesResolver), new TestAssembliesResolver());
+            // GlobalConfiguration.Configuration.Services.Replace(typeof(IAssembliesResolver), new TestAssembliesResolver());
 
-           var container = new Container();
+            var container = new Container();
 
 
             //var container = new Container();
@@ -69,15 +68,15 @@ namespace Injector
             // This is an extension method from the integration package.
             var ass = Assembly.GetExecutingAssembly();
 
-           container.RegisterWebApiControllers(GlobalConfiguration.Configuration,ass);
-       
+            container.RegisterWebApiControllers(GlobalConfiguration.Configuration, ass);
+
 
             container.Verify();
 
             IClienteBusiness = container.GetInstance<IClienteBusiness>();
 
 
-          //  GlobalConfiguration.Configuration.DependencyResolver =   new SimpleInjectorWebApiDependencyResolver(container);
+            //  GlobalConfiguration.Configuration.DependencyResolver =   new SimpleInjectorWebApiDependencyResolver(container);
 
             //iniciar Map
             Data.RegisterMappings.Register();

@@ -6,6 +6,7 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
 using Domain;
 using Microsoft.Owin.Security.OAuth;
 
@@ -13,26 +14,29 @@ namespace WebApi.Security
 {
 
 
- 
+
     public class AuthAuthorizationServerProvider : OAuthAuthorizationServerProvider
     {
         private readonly IClienteBusiness _clienteBusiness;
-        public AuthAuthorizationServerProvider(IClienteBusiness clienteBusiness)
+        private HttpConfiguration _Configuration;
+
+        public AuthAuthorizationServerProvider(IClienteBusiness clienteBusiness, HttpConfiguration config)
         {
             _clienteBusiness = clienteBusiness;
+            _Configuration = config;
         }
 
         //=> Obter Perfil do usuario no retorno do acces_token
         private Dictionary<string, string> _roles;
 
-      
+
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             context.Validated();
             await Task.FromResult(context);
         }
 
-        
+
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
@@ -57,15 +61,23 @@ namespace WebApi.Security
                     identity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
                     identity.AddClaim(new Claim("url", result.Ambiente));
 
+                    identity.AddClaim(new Claim("porMinuto", "2"));
+
+                    identity.AddClaim(new Claim("porHora", "10"));
+
 
                     var principal = new GenericPrincipal(identity, roles.ToArray());
                     Thread.CurrentPrincipal = principal;
+
+                    // SwaggerConfig.Configuration.MessageHandlers.Add(new LogHandler());
+
+                    //  _Configuration.MessageHandlers.Add(new LogHandler());
 
                     await Task.FromResult(context.Validated(identity));
                 }
                 else
                 {
-                    context.SetError("invalid_grant","Usuario ou Senha Invalidos");
+                    context.SetError("invalid_grant", "Usuario ou Senha Invalidos");
                 }
             }
             catch (Exception ex)

@@ -287,6 +287,9 @@
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
     </Reference>
+    <Reference Include="WebApiThrottle, Version=1.5.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebApiThrottle.1.5.4\lib\net45\WebApiThrottle.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -320,6 +323,8 @@
     <Compile Include="Security\AuthAuthorizationServerProvider.cs" />
     <Compile Include="Security\AuthorizeRolesAttribute.cs" />
     <Compile Include="Security\CorsPolicyFactory.cs" />
+    <Compile Include="Security\CustomThrottlingHandler.cs" />
+    <Compile Include="Security\LogHandler.cs" />
     <Compile Include="Security\MyCorsPolicyAttribute.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

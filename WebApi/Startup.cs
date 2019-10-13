@@ -15,11 +15,14 @@ namespace WebApi
     {
         public void Configuration(IAppBuilder app)
         {
-            Injector.ConfiguracaoSimpleInjector.StartSimpleInjetor();
-            ConfigureOAuth(app);
-
             HttpConfiguration config = new HttpConfiguration();
-           
+            config.MessageHandlers.Add(new LogHandler());
+            config.MessageHandlers.Add(new CustomThrottlingHandler());
+
+            WebApiConfig.Register(config);
+            Injector.ConfiguracaoSimpleInjector.StartSimpleInjetor(config);
+            ConfigureOAuth(app, config);       
+            SwaggerConfig.Register(config);
 
             app.UseWebApi(config);
 
@@ -30,26 +33,28 @@ namespace WebApi
             
            var con = Injector.ConfiguracaoSimpleInjector.StartSimpleInjetorTeste();
 
-            ConfigureOAuth(app);
+           
 
             HttpConfiguration config = new HttpConfiguration()
             {
                 DependencyResolver = new SimpleInjectorWebApiDependencyResolver(con),
                
             };
+
+            ConfigureOAuth(app, config);
             WebApiConfig.Register(config);
            
             app.UseWebApi(config);
         }
 
-        public void ConfigureOAuth(IAppBuilder app)
+        public void ConfigureOAuth(IAppBuilder app, HttpConfiguration config)
         {
             var oAuthServerOptions = new OAuthAuthorizationServerOptions()
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/api/token"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
-                Provider = new AuthAuthorizationServerProvider(Injector.ConfiguracaoSimpleInjector.IClienteBusiness)
+                Provider = new AuthAuthorizationServerProvider(Injector.ConfiguracaoSimpleInjector.IClienteBusiness, config)
             };
 
             // Token Generation

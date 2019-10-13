@@ -8,19 +8,20 @@ using System.Web.Http.Description;
 using Newtonsoft.Json;
 using System;
 
-[assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
+//[assembly:  PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
 namespace WebApi
 {
     public class SwaggerConfig
     {
-        public static void Register()
+       
+        public static void Register(HttpConfiguration config)
         {
             var thisAssembly = typeof(SwaggerConfig).Assembly;
 
-            GlobalConfiguration.Configuration
-                .EnableSwagger(c =>
-                    {
+            config
+                    .EnableSwagger(c =>
+                        {
                         // By default, the service root url is inferred from the request used to access the docs.
                         // However, there may be situations (e.g. proxy and load-balanced environments) where this does not
                         // resolve correctly. You can workaround this by providing your own code to determine the root URL.
@@ -68,9 +69,9 @@ namespace WebApi
                         //
                         // NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
                         c.ApiKey("Authorization")
-                            .Description("Bearer Authentication")
-                            .Name("Bearer")
-                            .In("header");
+                                .Description("Bearer Authentication")
+                                .Name("Bearer")
+                                .In("header");
 
                         //c.OAuth2("oauth2")
                         //    .Description("OAuth2 Implicit Grant")
@@ -99,7 +100,7 @@ namespace WebApi
                         // ProductsController will be listed before those from a CustomersController. This is typically
                         // used to customize the order of groupings in the swagger-ui.
                         //
-                       // c.OrderActionGroupsBy(new DescendingAlphabeticComparer());
+                        // c.OrderActionGroupsBy(new DescendingAlphabeticComparer());
 
                         // If you annotate Controllers and API Types with
                         // Xml comments (http://msdn.microsoft.com/en-us/library/b2s063f7(v=vs.110).aspx), you can incorporate
@@ -182,8 +183,8 @@ namespace WebApi
                         //
                         //c.CustomProvider((defaultProvider) => new CachingSwaggerProvider(defaultProvider));
                     })
-                .EnableSwaggerUi(c =>
-                    {
+                    .EnableSwaggerUi(c =>
+                        {
                         // Use the "DocumentTitle" option to change the Document title.
                         // Very helpful when you have multiple Swagger pages open, to tell them apart.
                         //
@@ -254,7 +255,10 @@ namespace WebApi
                         // "apiKeyIn" can either be "query" or "header"
                         //
                         c.EnableApiKeySupport("Authorization", "header");
-                    });
+                        });
+
+            
+          
         }
     }
 
