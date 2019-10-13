@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Net.Http.Extensions.Compression.Core.Compressors;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Microsoft.AspNet.WebApi.Extensions.Compression.Server;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
@@ -16,12 +18,13 @@ namespace WebApi
         public void Configuration(IAppBuilder app)
         {
             HttpConfiguration config = new HttpConfiguration();
+            config.MessageHandlers.Add(new ServerCompressionHandler(new GZipCompressor(), new DeflateCompressor()));
             config.MessageHandlers.Add(new LogHandler());
             config.MessageHandlers.Add(new CustomThrottlingHandler());
 
             WebApiConfig.Register(config);
             Injector.ConfiguracaoSimpleInjector.StartSimpleInjetor(config);
-            ConfigureOAuth(app, config);       
+            ConfigureOAuth(app, config);
             SwaggerConfig.Register(config);
 
             app.UseWebApi(config);
@@ -30,20 +33,20 @@ namespace WebApi
 
         public void ConfigurationTeste(IAppBuilder app)
         {
-            
-           var con = Injector.ConfiguracaoSimpleInjector.StartSimpleInjetorTeste();
 
-           
+            var con = Injector.ConfiguracaoSimpleInjector.StartSimpleInjetorTeste();
+
+
 
             HttpConfiguration config = new HttpConfiguration()
             {
                 DependencyResolver = new SimpleInjectorWebApiDependencyResolver(con),
-               
+
             };
 
             ConfigureOAuth(app, config);
             WebApiConfig.Register(config);
-           
+
             app.UseWebApi(config);
         }
 
