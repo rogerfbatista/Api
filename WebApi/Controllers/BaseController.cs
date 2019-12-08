@@ -17,6 +17,13 @@ namespace WebApi.Controllers
     {
         public string Url;
 
+        public static int Segundos
+        {
+            get { return 1; }
+        }
+
+
+
         public BaseController()
         {
             var identity = (ClaimsIdentity)Thread.CurrentPrincipal.Identity;

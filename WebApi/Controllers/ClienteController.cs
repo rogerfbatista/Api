@@ -8,8 +8,9 @@ namespace WebApi.Controllers
 {
 
 
+    //8 hora
 
-    [CacheOutput(ServerTimeSpan = 10)]
+    [CacheOutput(ServerTimeSpan = 60 * 60 * 8)]
     public class ClienteController : BaseController
     {
         // GET: api/Cliente

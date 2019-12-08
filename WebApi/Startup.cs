@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http.Extensions.Compression.Core.Compressors;
-using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.AspNet.WebApi.Extensions.Compression.Server;
 using Microsoft.Owin;
@@ -28,6 +27,7 @@ namespace WebApi
             SwaggerConfig.Register(config);
 
             app.UseWebApi(config);
+           
 
         }
 

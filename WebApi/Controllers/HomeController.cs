@@ -11,7 +11,7 @@ namespace WebApi.Controllers
         // GET: Home
         public RedirectResult Index()
         {
-           return  Redirect("~/swagger");
+           return  Redirect("~/swagger/ui/index");
         }
 
         // GET: Home/Details/5

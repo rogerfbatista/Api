@@ -36,7 +36,15 @@ namespace WebApi.Security
             await Task.FromResult(context);
         }
 
+        public override Task ValidateAuthorizeRequest(OAuthValidateAuthorizeRequestContext context)
+        {
+            return base.ValidateAuthorizeRequest(context);
+        }
 
+        public override Task ValidateTokenRequest(OAuthValidateTokenRequestContext context)
+        {
+            return base.ValidateTokenRequest(context);
+        }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
@@ -45,6 +53,8 @@ namespace WebApi.Security
 
             context.OwinContext.Response.Headers.Remove("Cache-Control");
             context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+            var localIP = context.OwinContext.Request.LocalIpAddress;
+            var remoteIP = context.OwinContext.Request.RemoteIpAddress;
 
             var identity = new ClaimsIdentity(context.Options.AuthenticationType);
 
@@ -67,12 +77,15 @@ namespace WebApi.Security
 
 
                     var principal = new GenericPrincipal(identity, roles.ToArray());
+
+                    Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+
                     Thread.CurrentPrincipal = principal;
 
                     // SwaggerConfig.Configuration.MessageHandlers.Add(new LogHandler());
 
                     //  _Configuration.MessageHandlers.Add(new LogHandler());
-
+                   
                     await Task.FromResult(context.Validated(identity));
                 }
                 else
@@ -86,5 +99,25 @@ namespace WebApi.Security
                 context.SetError("invalid_grant", ex.Message);
             }
         }
+
+        public override Task AuthorizationEndpointResponse(OAuthAuthorizationEndpointResponseContext context)
+        {
+            return base.AuthorizationEndpointResponse(context);
+        }
+        public override Task MatchEndpoint(OAuthMatchEndpointContext context)
+        {
+            return base.MatchEndpoint(context);
+        }
+
+        public override Task TokenEndpoint(OAuthTokenEndpointContext context)
+        {
+            return base.TokenEndpoint(context);
+        }
+        public override Task GrantAuthorizationCode(OAuthGrantAuthorizationCodeContext context)
+        {
+            return base.GrantAuthorizationCode(context);
+        }
+
+
     }
 }

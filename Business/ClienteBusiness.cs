@@ -33,7 +33,9 @@ namespace Business
         }
         public  List<Cliente> ObterTodos()
         {
+
             return _repository.ObterTodos();
+
         }
     }
 }

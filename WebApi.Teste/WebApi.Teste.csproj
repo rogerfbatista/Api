@@ -215,10 +215,6 @@
       <Project>{15a1d9b3-0f5b-4a96-b38a-2696e30f00f9}</Project>
       <Name>Business</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Data\Data.csproj">
-      <Project>{3806551c-b755-489e-964d-d32925e58564}</Project>
-      <Name>Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Domain\Domain.csproj">
       <Project>{2291b8f1-6d8a-4d1a-aaea-a1b23eaf8aae}</Project>
       <Name>Domain</Name>
