@@ -19,7 +19,10 @@ namespace WebApi.Controllers
         // GET api/values
         public IEnumerable<object> Get()
         {
-            var list = _clienteBusiness.ObterTodos();
+            var caminho = System.Web.Hosting.HostingEnvironment.MapPath("~/Views/TextFile.txt");
+
+            var list = _clienteBusiness.ObterTodos(caminho);
+
             return list;
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain;
+using Newtonsoft.Json;
 
 namespace Business
 {
@@ -31,11 +32,29 @@ namespace Business
                 }
             };
         }
-        public  List<Cliente> ObterTodos()
+        public List<Cliente> ObterTodos(string caminho)
         {
+            var lista = _repository.ObterTodos();
+            var result = JsonConvert.SerializeObject(lista);
 
-            return _repository.ObterTodos();
+            var key = "6UHjPgXZzXCGkhxV2QCnooyJexUzvJrw";
 
+            var encrypt = Util.Aes256CbcEncrypter.Encrypt(result, key);
+
+            Util.Arquivo.SalvarArquivoText(caminho, encrypt);
+
+            var txt = Util.Arquivo.ObterArquivoText(caminho);
+
+            var decrypted = Util.Aes256CbcEncrypter.Decrypt(txt, key);
+
+
+            return lista;
+
+        }
+
+        public List<Cliente> ObterTodos()
+        {
+            throw new NotImplementedException();
         }
     }
 }
