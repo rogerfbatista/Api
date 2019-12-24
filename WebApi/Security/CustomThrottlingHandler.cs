@@ -36,7 +36,7 @@ namespace WebApi.Security
             var porMinuto = string.IsNullOrEmpty(claims.FirstOrDefault(c => c.Type == "porMinuto")?.Value) ? 3 : Convert.ToInt64(claims.FirstOrDefault(c => c.Type == "porMinuto")?.Value);
             var porHora = string.IsNullOrEmpty(claims.FirstOrDefault(c => c.Type == "porHora")?.Value) ? 60 : Convert.ToInt64(claims.FirstOrDefault(c => c.Type == "porHora")?.Value);
 
-            base.Policy = new ThrottlePolicy(1,porMinuto,porHora)
+            base.Policy = new ThrottlePolicy(null,porMinuto,porHora)
             {
                 IpThrottling = true,
                 //scope to clients

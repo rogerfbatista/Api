@@ -10,7 +10,7 @@ namespace WebApi.Controllers
     {
         // GET: Home
         public RedirectResult Index()
-        {
+       {
            return  Redirect("~/swagger/ui/index");
         }
 
